@@ -1,0 +1,42 @@
+<div class="container">
+  <h1>Gestion des tâches</h1>
+
+  <form [formGroup]="addForm" (ngSubmit)="addTask()" class="add-form">
+    <input type="text" formControlName="title" placeholder="Titre de la tâche" required />
+    <textarea formControlName="description" placeholder="Description de la tâche" rows="2"></textarea>
+    <button type="submit" class="btn btn-primary" [disabled]="!addForm.valid">Ajouter une tâche</button>
+  </form>
+
+  @if (tasks.length > 0) {
+    <ul class="task-list">
+      @for (task of tasks; track task._id) {
+        <li class="task-item">
+          @if (editingId !== task._id) {
+            <div class="task-content">
+              <div class="task-text">
+                <h3 [class.done]="task.completed">{{ task.title }}</h3>
+                <p>{{ task.description }}</p>
+              </div>
+              <div class="task-actions">
+                <button class="btn btn-success" (click)="toggleTask(task)">
+                  {{ task.completed ? 'Reprendre' : 'Terminer' }}
+                </button>
+                <button class="btn btn-warning" (click)="startEdit(task)">Modifier</button>
+                <button class="btn btn-danger" (click)="deleteTask(task)">Supprimer</button>
+              </div>
+            </div>
+          } @else {
+            <form [formGroup]="editForm" (ngSubmit)="saveEdit(task)" class="edit-form">
+              <input type="text" formControlName="title" placeholder="Titre de la tâche" required />
+              <input type="text" formControlName="description" placeholder="Description de la tâche" />
+              <button type="submit" class="btn btn-primary" [disabled]="!editForm.valid">Enregistrer</button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
+            </form>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="empty">Aucune tâche pour le moment.</p>
+  }
+</div>
